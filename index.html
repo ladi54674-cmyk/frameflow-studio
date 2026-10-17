@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101114">
+  <title>FrameFlow Studio — AI Video</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #101114;
+      color: #f5f5f7;
+      font-family: system-ui, sans-serif;
+    }
+    .app { max-width: 680px; margin: auto; padding: 22px 16px 40px; }
+    header { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+    .logo {
+      width: 43px; height: 43px; display: grid; place-items: center;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      color: #101114; font-size: 22px; font-weight: 900; border-radius: 14px;
+    }
+    h1 { font-size: 19px; margin: 0; }
+    .sub { font-size: 12px; color: #a1a1aa; margin-top: 3px; }
+    .tag {
+      margin-left: auto; font-size: 11px; color: #c4b5fd;
+      border: 1px solid #514477; padding: 6px 9px; border-radius: 20px;
+    }
+    h2 { font-size: 27px; line-height: 1.25; margin: 0 0 9px; }
+    .intro { color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .panel {
+      background: #1a1b20; border: 1px solid #30313a;
+      border-radius: 18px; padding: 17px; margin-bottom: 16px;
+    }
+    .label { display: block; font-size: 14px; font-weight: 650; margin-bottom: 11px; }
+    .upload {
+      display: block; text-align: center; padding: 25px 12px;
+      border: 1px dashed #55566a; border-radius: 14px; cursor: pointer;
+      background: #15161b;
+    }
+    .upload .symbol { font-size: 34px; }
+    .upload p { font-size: 13px; color: #c4c4ce; margin: 8px 0 4px; }
+    .hint { color: #858591; font-size: 11px; }
+    input[type=file] { display: none; }
+    #preview { display: none; width: 100%; max-height: 280px; object-fit: contain; margin-top: 13px; border-radius: 12px; }
+    textarea, select {
+      width: 100%; color: #f5f5f7; background: #111216;
+      border: 1px solid #383943; border-radius: 11px;
+      padding: 13px; font: inherit; font-size: 14px; outline: none;
+    }
+    textarea { min-height: 115px; resize: vertical; }
+    textarea:focus, select:focus { border-color: #a78bfa; }
+    .presets { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
+    .chip {
+      background: #262631; color: #d4d4df; border: 1px solid #3b3b49;
+      border-radius: 20px; padding: 8px 10px; font-size: 12px; cursor: pointer;
+    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field label { display: block; font-size: 12px; color: #b8b8c4; margin-bottom: 8px; }
+    .primary {
+      width: 100%; padding: 15px; border: 0; border-radius: 13px;
+      color: #101114; font-size: 15px; font-weight: 800; cursor: pointer;
+      background: linear-gradient(100deg, #c4b5fd, #93c5fd);
+    }
+    .note { color: #858591; font-size: 11px; line-height: 1.6; text-align: center; margin: 13px 5px; }
+    .status { display: none; margin-top: 15px; padding: 13px; border-radius: 12px; background: #262631; font-size: 13px; line-height: 1.6; }
+    .section-title { font-size: 16px; margin: 25px 0 12px; }
+    .scene { display: flex; align-items: center; gap: 11px; }
+    .scene-icon { background: #302a45; padding: 11px; border-radius: 10px; }
+    .scene small { color: #9999a7; }
+    footer { margin-top: 30px; text-align: center; color: #777783; font-size: 11px; }
+    @media (max-width: 360px) {
+      .app { padding: 17px 12px; }
+      h2 { font-size: 24px; }
+      .tag { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="logo">F</div>
+      <div>
+        <h1>FrameFlow Studio</h1>
+        <div class="sub">IMAGE TO VIDEO WORKSPACE</div>
+      </div>
+      <span class="tag">EARLY ACCESS</span>
+    </header>
+
+    <h2>Bring your images<br>to life.</h2>
+    <p class="intro">ဓာတ်ပုံတစ်ပုံနဲ့ စတင်ပါ။ သင်စိတ်ကူးထားတဲ့ Video အတွက် Prompt နဲ့ Scene တွေကို ပြင်ဆင်ပါ။</p>
+
+    <section class="panel">
+      <label class="label" for="imageInput">01 / ဓာတ်ပုံထည့်ပါ</label>
+      <label class="upload" for="imageInput">
+        <div class="symbol">＋</div>
+        <p>ဓာတ်ပုံရွေးရန် နှိပ်ပါ</p>
+        <div class="hint">JPG, PNG, WEBP · Preview only</div>
+      </label>
+      <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp">
+      <img id="preview" alt="သင်ရွေးထားသော ဓာတ်ပုံ">
+    </section>
+
+    <section class="panel">
+      <label class="label" for="prompt">02 / Video Prompt</label>
+      <textarea id="prompt" maxlength="2000" placeholder="ဥပမာ - A cinematic camera movement, soft sunlight, gentle wind, realistic details..."></textarea>
+      <div class="presets">
+        <button class="chip" data-prompt="Cinematic camera movement, beautiful lighting, realistic details">🎬 Cinematic</button>
+        <button class="chip" data-prompt="Slow motion, gentle wind, dreamy atmosphere, soft light">🌤 Dreamy</button>
+        <button class="chip" data-prompt="Smooth camera movement, vibrant colors, natural motion">✨ Smooth motion</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <label class="label">03 / Video Settings</label>
+      <div class="grid">
+        <div class="field">
+          <label for="ratio">Aspect ratio</label>
+          <select id="ratio">
+            <option value="9:16">9:16 · Mobile</option>
+            <option value="16:9">16:9 · Landscape</option>
+            <option value="1:1">1:1 · Square</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="duration">Clip length</label>
+          <select id="duration">
+            <option value="5">5 seconds</option>
+            <option value="10">10 seconds</option>
+            <option value="15">15 seconds</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <button class="primary" id="generate">Prepare my video →</button>
+    <p class="note">UI Prototype only · ဒီခလုတ်က AI Video အမှန်တကယ် မထုတ်လုပ်သေးပါ။</p>
+    <div class="status" id="status" role="status"></div>
+
+    <h3 class="section-title">Your project plan</h3>
+    <section class="panel scene">
+      <div class="scene-icon">🎞️</div>
+      <div>
+        <strong>Scene 01</strong><br>
+        <small>Image + Prompt · <span id="sceneDuration">5</span> seconds</small>
+      </div>
+    </section>
+
+    <footer>FrameFlow Studio · Built for your next big idea</footer>
+  </main>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+    const prompt = document.getElementById('prompt');
+    const duration = document.getElementById('duration');
+    const status = document.getElementById('status');
+    let previewUrl = null;
+
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files && imageInput.files[0];
+      if (!file) return;
+
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        status.style.display = 'block';
+        status.textContent = 'JPG, PNG သို့မဟုတ် WEBP ပုံကို ရွေးပေးပါ။';
+        imageInput.value = '';
+        return;
+      }
+
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = URL.createObjectURL(file);
+      preview.src = previewUrl;
+      preview.style.display = 'block';
+      status.style.display = 'block';
+      status.textContent = 'ဓာတ်ပုံကို ရွေးပြီးပါပြီ။ လက်ရှိမှာ သင့် Browser ထဲမှာပဲ Preview ပြနေပါတယ်။';
+    });
+
+    document.querySelectorAll('[data-prompt]').forEach(button => {
+      button.addEventListener('click', () => {
+        prompt.value = button.dataset.prompt;
+        prompt.focus();
+      });
+    });
+
+    duration.addEventListener('change', () => {
+      document.getElementById('sceneDuration').textContent = duration.value;
+    });
+
+    document.getElementById('generate').addEventListener('click', () => {
+      status.style.display = 'block';
+
+      if (!imageInput.files || !imageInput.files[0]) {
+        status.textContent = 'စတင်ဖို့ အရင်ဆုံး ဓာတ်ပုံတစ်ပုံ ရွေးပေးပါ။';
+        return;
+      }
+
+      if (!prompt.value.trim()) {
+        status.textContent = 'Video မှာ ဘယ်လိုလှုပ်ရှားမှု ဖြစ်စေချင်လဲဆိုတဲ့ Prompt ကို ရေးပေးပါ။';
+        prompt.focus();
+        return;
+      }
+
+      status.textContent =
+        'Project အချက်အလက်တွေ ပြင်ဆင်ပြီးပါပြီ။ ဒီ Prototype မှာ AI API မချိတ်ဆက်ရသေးတဲ့အတွက် Video ကို မထုတ်လုပ်သေးပါ။';
+    });
+  </script>
+</body>
+            </html>
+            
